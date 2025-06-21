@@ -135,3 +135,36 @@ slots.forEach(slot => {
         }
     });
 });
+
+// Allow dropping items back into the item pool even if it's empty
+const itemPool = document.getElementById('item-pool');
+if (itemPool) {
+    // Always allow dropping, even if there are no children
+    itemPool.addEventListener('dragover', e => {
+        e.preventDefault();
+        if (draggedItem) {
+            itemPool.classList.add('bg-green-100');
+        }
+    });
+    itemPool.addEventListener('dragleave', () => {
+        itemPool.classList.remove('bg-green-100');
+    });
+    // Use event delegation to allow dropping on empty space
+    itemPool.addEventListener('drop', e => {
+        e.preventDefault();
+        itemPool.classList.remove('bg-green-100');
+        if (draggedItem) {
+            // If item was in inventory, clean up grid state
+            if (originalSlot && originalSlot.classList.contains('inventory-slot')) {
+                removeItemFromGrid(draggedItem);
+            }
+            // Remove absolute positioning and styles
+            draggedItem.style.position = '';
+            draggedItem.style.left = '';
+            draggedItem.style.top = '';
+            draggedItem.style.zIndex = '';
+            // Add to pool (works even if pool is empty)
+            itemPool.appendChild(draggedItem);
+        }
+    });
+}

@@ -104,21 +104,11 @@ function saveData() {
 
 // Event listeners
 window.addEventListener('load', loadData);
-document.addEventListener('input', function (e) {
-    // Only saveData if the event target is a character field (input or textarea)
-    const characterFields = [
-        'character-name', 'character-background', 'character-description',
-        'character-birthsign', 'character-coat', 'character-look',
-        'stat-str-max', 'stat-str-current', 'stat-dex-max', 'stat-dex-current',
-        'stat-wil-max', 'stat-wil-current', 'stat-hp-max', 'stat-hp-current',
-        'pips-amount', 'character-level', 'character-xp', 'character-grit',
-        'ignored-conditions', 'banked-items'
-    ];
-    if (e.target.id && characterFields.includes(e.target.id)) {
-        saveData();
-    }
+window.addEventListener('input', saveData);
+window.addEventListener('load', () => {
+    loadItems();
+    saveItems();
 });
-window.addEventListener('load', loadItems);
 
 document.getElementById('item-pool').addEventListener('DOMSubtreeModified', saveItems);
 document.querySelectorAll('.inventory-slot').forEach(slot => {
@@ -139,11 +129,4 @@ window.deleteItem = function (item) {
 };
 document.querySelectorAll('.inventory-slot').forEach(slot => {
     slot.addEventListener('drop', () => setTimeout(saveItems, 10));
-});
-document.addEventListener('input', function (e) {
-    if (
-        e.target.matches('.draggable-item div[contenteditable]')
-    ) {
-        saveItems();
-    }
 });
