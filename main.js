@@ -165,6 +165,8 @@ if (itemPool) {
             draggedItem.style.zIndex = '';
             // Add to pool (works even if pool is empty)
             itemPool.appendChild(draggedItem);
+            // Save after dropping into the pool
+            if (typeof saveItems === "function") saveItems();
         }
     });
 }
