@@ -127,10 +127,3 @@ window.deleteItem = function (item) {
 document.querySelectorAll('.inventory-slot').forEach(slot => {
     slot.addEventListener('drop', () => setTimeout(saveItems, 10));
 });
-document.addEventListener('input', function (e) {
-    if (
-        e.target.matches('.draggable-item div[contenteditable]')
-    ) {
-        saveItems();
-    }
-});
