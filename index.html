@@ -347,13 +347,19 @@
                 input.style.fontSize = (parseInt(input.style.fontSize) - 1) + 'px';
             }
         }
+        function updateAllShrinkInputs() {
+            document.querySelectorAll('.shrink-on-overflow').forEach(input => {
+                adjustInputFontSize(input);
+            });
+        }
         document.querySelectorAll('.shrink-on-overflow').forEach(input => {
             input.addEventListener('input', function () {
                 adjustInputFontSize(this);
             });
-            // Initial adjustment in case of pre-filled values
-            adjustInputFontSize(input);
         });
+        // Ensure shrink-to-fit runs after page load and after autofill/localStorage restore
+        window.addEventListener('DOMContentLoaded', updateAllShrinkInputs);
+        window.addEventListener('load', updateAllShrinkInputs);
     </script>
 </body>
 
