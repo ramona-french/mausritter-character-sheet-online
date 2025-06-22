@@ -51,7 +51,7 @@
                     <div class="flex items-center pb-4">
                         <label class="w-1/3 font-extrabold text-gray-700 text-3xl tracking-tight">Name</label>
                         <input type="text" id="character-name" placeholder="Enter name"
-                            class="w-2/3 bg-transparent border-none p-0 text-xl focus:outline-none my-auto" />
+                            class="shrink-on-overflow w-2/3 bg-transparent border-none p-0 text-xl focus:outline-none my-auto" />
                     </div>
                     <!-- Divider -->
                     <div class="border-t-2 border-black"></div>
@@ -59,7 +59,7 @@
                     <div class="flex items-center pt-4">
                         <label class="w-1/3 font-semibold text-gray-700">Background</label>
                         <input type="text" id="character-background" placeholder="Enter background"
-                            class="w-2/3 bg-transparent border-none p-0 focus:outline-none" />
+                            class="shrink-on-overflow w-2/3 bg-transparent border-none p-0 focus:outline-none" />
                     </div>
                 </div>
 
@@ -91,14 +91,14 @@
             <div class="w-2/5 flex flex-col gap-6">
 
                 <!-- Info -->
-                <div class="bg-white-50 p-2 rounded-xl">
+                <div class="bg-white p-2 rounded-xl">
                     <table class="table-auto w-full">
                         <tbody>
                             <tr>
                                 <td class="pr-4 py-2 font-semibold text-gray-700 text-sm">Birthsign</td>
                                 <td>
                                     <input type="text" id="character-birthsign"
-                                        class="w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm"
+                                        class="shrink-on-overflow w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm"
                                         placeholder="Enter birthsign">
                                 </td>
                             </tr>
@@ -106,7 +106,7 @@
                                 <td class="pr-4 py-2 font-semibold text-gray-700 text-sm">Coat</td>
                                 <td>
                                     <input type="text" id="character-coat"
-                                        class="w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm"
+                                        class="shrink-on-overflow w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm"
                                         placeholder="Enter coat">
                                 </td>
                             </tr>
@@ -114,7 +114,7 @@
                                 <td class="pr-4 py-2 font-semibold text-gray-700 text-sm">Look</td>
                                 <td>
                                     <input type="text" id="character-look"
-                                        class="w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm"
+                                        class="shrink-on-overflow w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm"
                                         placeholder="Enter look">
                                 </td>
                             </tr>
@@ -242,7 +242,7 @@
                     <div class="border border-gray-300 p-2 rounded">
                         <div class="font-semibold text-gray-700">Ignored conditions</div>
                         <input type="text" id="ignored-conditions"
-                            class="w-full px-2 py-1 border border-gray-300 rounded-md text-center" />
+                            class="shrink-on-overflow w-full px-2 py-1 border border-gray-300 rounded-md text-center" />
                     </div>
                 </div>
             </div>
@@ -298,6 +298,7 @@
                     <option value="1x1">1x1 (Normal)</option>
                     <option value="1x2">1x2 (Tall)</option>
                     <option value="2x1">2x1 (Wide)</option>
+                    <option value="2x2">2x2 (Massive)</option> <!-- Added option -->
                 </select>
             </div>
             <div class="col-span-2">
@@ -319,6 +320,9 @@
     <button id="dark-toggle" class="fixed top-4 left-4 z-50 bg-gray-800 text-white px-3 py-1 rounded shadow">
         Toggle Dark Mode
     </button>
+    <button id="reset-sheet" class="fixed top-16 left-4 z-50 bg-red-600 text-white px-3 py-1 rounded shadow">
+        Reset Sheet
+    </button>
 
     <script src="main.js"></script>
     <script src="inventory.js"></script>
@@ -327,6 +331,29 @@
         document.getElementById('dark-toggle').onclick = function () {
             document.body.classList.toggle('invert-dark');
         }
+        document.getElementById('reset-sheet').onclick = function () {
+            if (confirm('Are you sure you want to reset the character sheet? This will erase all data.')) {
+                localStorage.clear();
+                location.reload();
+            }
+        }
+    </script>
+    <script>
+        // Shrink input font size if text overflows
+        function adjustInputFontSize(input, minFontSize = 10, maxFontSize = 16) {
+            input.style.fontSize = maxFontSize + 'px';
+            // Shrink font size until text fits or minFontSize reached
+            while (input.scrollWidth > input.clientWidth && parseInt(input.style.fontSize) > minFontSize) {
+                input.style.fontSize = (parseInt(input.style.fontSize) - 1) + 'px';
+            }
+        }
+        document.querySelectorAll('.shrink-on-overflow').forEach(input => {
+            input.addEventListener('input', function () {
+                adjustInputFontSize(this);
+            });
+            // Initial adjustment in case of pre-filled values
+            adjustInputFontSize(input);
+        });
     </script>
 </body>
 
