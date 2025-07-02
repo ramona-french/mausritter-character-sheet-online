@@ -23,13 +23,13 @@
             word-break: break-word;
         }
 
-        body.invert-dark {
+        html.invert-dark body {
             filter: invert(1) hue-rotate(180deg);
             background: #181825 !important;
         }
 
-        body.invert-dark img,
-        body.invert-dark video {
+        html.invert-dark body img,
+        html.invert-dark body video {
             filter: invert(1) hue-rotate(180deg);
         }
 
@@ -38,6 +38,13 @@
             border: 2px dashed #cbd5e1;
         }
     </style>
+    <script>
+        // Prevent flash of wrong theme
+        if (localStorage.getItem('dark-mode') === 'on') {
+            document.documentElement.classList.add('invert-dark');
+            document.body && document.body.classList.add('invert-dark');
+        }
+    </script>
 </head>
 
 <body class="flex items-center justify-center min-h-screen bg-gray-100">
@@ -328,8 +335,20 @@
     <script src="inventory.js"></script>
     <script src="storage.js"></script>
     <script>
+        // Restore dark mode from localStorage on load
+        if (localStorage.getItem('dark-mode') === 'on') {
+            document.body.classList.add('invert-dark');
+        }
+
         document.getElementById('dark-toggle').onclick = function () {
+            document.documentElement.classList.toggle('invert-dark');
             document.body.classList.toggle('invert-dark');
+            // Save state to localStorage
+            if (document.documentElement.classList.contains('invert-dark')) {
+                localStorage.setItem('dark-mode', 'on');
+            } else {
+                localStorage.setItem('dark-mode', 'off');
+            }
         }
         document.getElementById('reset-sheet').onclick = function () {
             if (confirm('Are you sure you want to reset the character sheet? This will erase all data.')) {
