@@ -11,7 +11,8 @@ function attachUsageDotHandlers(context = document) {
 
 function createCustomItem() {
     const title = document.getElementById('item-title').value.trim();
-    const usage = parseInt(document.getElementById('item-usage').value, 10);
+    let usage = document.getElementById('item-usage').value;
+    usage = usage === "" ? 0 : parseInt(usage, 10);
     const extra = document.getElementById('item-extra').value.trim();
     const type = document.getElementById('item-type').value.trim();
     const size = document.getElementById('item-size').value;
@@ -40,19 +41,19 @@ function createCustomItem() {
 
     // Only show extra if not empty
     const extraHtml = (extra && extra.trim() !== '')
-        ? `<div class="border border-black px-1 min-w-[2.5rem] text-right ml-2" contenteditable="true" style="min-height:1.5rem;">${extra}</div>`
-        : `<div class="min-w-[2.5rem] ml-2"></div>`;
+        ? `<div class="border border-black px-1 min-w-[2.5rem] text-right ml-2 font-pt-sans-narrow font-bold" contenteditable="true" style="min-height:1.5rem;">${extra}</div>`
+        : `<div class="min-w-[2.5rem] ml-2 font-pt-sans-narrow font-bold"></div>`;
 
     item.innerHTML = `
-        <div class="text-base font-semibold mb-0.5 text-left">${title}</div>
-        <hr class="border-gray-300 my-1">
-        <div class="flex flex-row items-center mb-2">
+        <div class="text-base font-semibold mb-0.5 text-left font-germania">${title}</div>
+        <hr class="border-black w-full my-1">
+        <div class="flex flex-row items-center mb-2 font-pt-sans-narrow font-bold">
             <div class="flex-shrink-0">${usageDots}</div>
             <div class="flex-1 flex justify-end items-center h-full">
                 ${extraHtml}
             </div>
         </div>
-        <div class="flex justify-between items-end mt-auto">
+        <div class="flex justify-between items-end mt-auto font-pt-sans-narrow font-bold">
             <div class="text-xs font-bold">${type}</div>
             <button onclick="deleteItem(this.parentElement.parentElement)" class="text-red-600 hover:text-red-800 text-lg">&times;</button>
         </div>

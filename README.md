@@ -7,3 +7,6 @@ Original Mausritter character sheet design © [Losing Games](https://mausritter.
 This project is not affiliated with or endorsed by Losing Games.
 
 Changes have been made from the original design to adapt it for online use.
+
+You can try the online character sheet here:  
+[https://ramona-french.github.io/mausritter-character-sheet-online/](https://ramona-french.github.io/mausritter-character-sheet-online/)
