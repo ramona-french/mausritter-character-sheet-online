@@ -311,10 +311,24 @@
         aria-label="Toggle Dark Mode">
         Toggle Dark Mode
     </button>
-    <button id="reset-sheet" class="fixed top-16 left-4 z-50 bg-red-600 text-white px-3 py-1 rounded shadow"
-        aria-label="Reset Sheet">
-        Reset Sheet
-    </button>
+
+    <!-- Sheet Selector and Import/Export -->
+    <div id="sheet-manager" class="fixed bottom-4 right-4 z-50 flex flex-col items-end gap-2">
+        <div class="flex gap-2">
+            <select id="sheet-selector" class="px-2 py-1 rounded border border-gray-300 bg-white shadow"></select>
+            <button id="sheet-add" class="bg-blue-600 text-white px-2 py-1 rounded shadow" title="New Sheet">+</button>
+            <button id="sheet-delete" class="bg-red-600 text-white px-2 py-1 rounded shadow"
+                title="Delete Sheet">&times;</button>
+        </div>
+        <div class="flex gap-2 mt-1">
+            <button id="sheet-export" class="bg-gray-800 text-white px-2 py-1 rounded shadow"
+                title="Export Sheet">Export</button>
+            <label class="bg-gray-800 text-white px-2 py-1 rounded shadow cursor-pointer" title="Import Sheet">
+                Import
+                <input id="sheet-import" type="file" accept=".mcs,application/json" class="hidden" />
+            </label>
+        </div>
+    </div>
 
     <script src="js/main.js"></script>
     <script src="js/inventory.js"></script>
