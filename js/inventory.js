@@ -23,7 +23,7 @@ function createCustomItem() {
     if (size === "1x2") sizeClasses = "w-36 h-72";
     else if (size === "2x1") sizeClasses = "w-72 h-36";
     else if (size === "2x2") sizeClasses = "w-72 h-72";
-    item.className = `draggable-item border border-black ${sizeClasses} p-2 text-sm flex flex-col justify-between cursor-move bg-white relative`;
+    item.className = `draggable-item border border-black ${sizeClasses} p-2 text-sm flex flex-col justify-between cursor-move relative`;
     item.setAttribute("draggable", "true");
     item.setAttribute("data-width", width);
     item.setAttribute("data-height", height);

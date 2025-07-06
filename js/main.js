@@ -26,9 +26,9 @@ function canPlaceItem(startSlot, width, height) {
         for (let c = pos.col; c < pos.col + width; c++) {
             const slot = getSlotByPosition(r, c);
             if (!slot) return false;
-            for (let child of slot.children) {
-                if (child !== draggedItem && child.classList.contains('draggable-item')) return false;
-            }
+            // Skip if slot is occupied by the item being moved
+            if (slot.children.length > 0 && draggedItem && slot.children[0] === draggedItem) continue;
+            if (slot.children.length > 0) return false;
             if (slot.style.visibility === 'hidden') return false;
         }
     }

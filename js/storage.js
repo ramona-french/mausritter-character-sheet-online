@@ -226,7 +226,8 @@ function switchSheet(id) {
     saveCurrentSheetData();
     setCurrentSheetId(id);
     updateSheetSelector();
-    loadSheetToUI(getSheets()[id]);
+    const sheet = getSheets()[id];
+    loadSheetToUI(sheet);
 }
 function exportCurrentSheet() {
     saveCurrentSheetData();
@@ -286,6 +287,8 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    document.getElementById('sheet-add').onclick = createNewSheet;
+    
     // If no sheets, create one
     let sheets = getSheets();
     if (!Object.keys(sheets).length) {
