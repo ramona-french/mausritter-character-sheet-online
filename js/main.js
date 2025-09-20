@@ -90,22 +90,146 @@ function removeItemFromGrid(item) {
 }
 
 function makeDraggable(el) {
-    el.addEventListener('dragstart', (e) => {
+    let dragging = false;
+    let dragClone = null;
+    let dragOffsetX = 0, dragOffsetY = 0;
+    let isTouch = false;
+
+    function updateClonePosition(x, y) {
+        if (dragClone) {
+            dragClone.style.left = (x - dragOffsetX) + 'px';
+            dragClone.style.top = (y - dragOffsetY) + 'px';
+        }
+    }
+
+    function dragStart(e) {
+        isTouch = e.type.startsWith('touch');
         draggedItem = el;
         originalSlot = el.parentElement;
-        setTimeout(() => el.classList.add('opacity-50'), 0);
-    });
-    el.addEventListener('dragend', () => {
-        if (originalSlot && originalSlot.classList.contains('inventory-slot')) {
-            if (draggedItem && draggedItem.parentElement === originalSlot) {
-                const label = originalSlot.getAttribute('data-label');
-                if (label && originalSlot.children.length === 0) originalSlot.textContent = label;
+        dragging = true;
+        let x, y;
+        if (isTouch) {
+            const touch = e.touches[0];
+            x = touch.clientX;
+            y = touch.clientY;
+            const rect = el.getBoundingClientRect();
+            dragOffsetX = x - (rect.left + rect.width / 2);
+            dragOffsetY = y - (rect.top + rect.height / 2);
+            dragClone = el.cloneNode(true);
+            Object.assign(dragClone.style, {
+                position: 'fixed',
+                left: (x - dragOffsetX) + 'px',
+                top: (y - dragOffsetY) + 'px',
+                pointerEvents: 'none',
+                opacity: '0.7',
+                zIndex: '9999',
+                width: rect.width + 'px',
+                height: rect.height + 'px',
+                margin: '0',
+            });
+            document.body.appendChild(dragClone);
+        } else {
+            setTimeout(() => el.classList.add('opacity-50'), 0);
+        }
+        el.classList.add('opacity-50');
+    }
+
+    function dragMove(e) {
+        if (!dragging) return;
+        let x, y;
+        if (isTouch) {
+            const touch = e.touches[0];
+            x = touch.clientX;
+            y = touch.clientY;
+            updateClonePosition(x, y);
+        } else {
+            x = e.clientX;
+            y = e.clientY;
+        }
+        // Highlight slot under pointer
+        document.querySelectorAll('.inventory-slot').forEach(slot => {
+            const rect = slot.getBoundingClientRect();
+            if (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) {
+                const width = parseInt(draggedItem.getAttribute('data-width')) || 1;
+                const height = parseInt(draggedItem.getAttribute('data-height')) || 1;
+                if (canPlaceItem(slot, width, height)) slot.classList.add('bg-green-100');
+                else slot.classList.add('bg-red-100');
+            } else {
+                slot.classList.remove('bg-green-100', 'bg-red-100');
             }
+        });
+        // Highlight item pool
+        const pool = document.getElementById('item-pool');
+        if (pool) {
+            const rect = pool.getBoundingClientRect();
+            if (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) {
+                pool.classList.add('bg-green-100');
+            } else {
+                pool.classList.remove('bg-green-100');
+            }
+        }
+        if (isTouch) e.preventDefault();
+    }
+
+    function dragEnd(e) {
+        if (!dragging) return;
+        let x, y;
+        if (isTouch) {
+            const touch = (e.changedTouches && e.changedTouches[0]) || (e.touches && e.touches[0]);
+            x = touch.clientX;
+            y = touch.clientY;
+        } else {
+            x = e.clientX;
+            y = e.clientY;
+        }
+        let dropped = false;
+        document.querySelectorAll('.inventory-slot').forEach(slot => {
+            const rect = slot.getBoundingClientRect();
+            slot.classList.remove('bg-green-100', 'bg-red-100');
+            if (!dropped && x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) {
+                const width = parseInt(draggedItem.getAttribute('data-width')) || 1;
+                const height = parseInt(draggedItem.getAttribute('data-height')) || 1;
+                if (canPlaceItem(slot, width, height)) {
+                    if (originalSlot && originalSlot.classList.contains('inventory-slot')) removeItemFromGrid(draggedItem);
+                    placeItemInGrid(draggedItem, slot);
+                    dropped = true;
+                }
+            }
+        });
+        const pool = document.getElementById('item-pool');
+        if (pool) {
+            pool.classList.remove('bg-green-100');
+            const rect = pool.getBoundingClientRect();
+            if (!dropped && x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) {
+                if (originalSlot && originalSlot.classList.contains('inventory-slot')) {
+                    removeItemFromGrid(draggedItem);
+                }
+                draggedItem.style.position = '';
+                draggedItem.style.left = '';
+                draggedItem.style.top = '';
+                draggedItem.style.zIndex = '';
+                pool.appendChild(draggedItem);
+                dropped = true;
+            }
+        }
+        if (dragClone) {
+            document.body.removeChild(dragClone);
+            dragClone = null;
         }
         if (draggedItem) draggedItem.classList.remove('opacity-50');
         draggedItem = null;
         originalSlot = null;
-    });
+        dragging = false;
+        if (typeof saveItems === "function") saveItems();
+    }
+
+    // Mouse events
+    el.addEventListener('dragstart', dragStart);
+    el.addEventListener('dragend', dragEnd);
+    // Touch events
+    el.addEventListener('touchstart', dragStart, { passive: false });
+    el.addEventListener('touchmove', dragMove, { passive: false });
+    el.addEventListener('touchend', dragEnd);
 }
 
 document.querySelectorAll('.draggable-item').forEach(item => makeDraggable(item));
